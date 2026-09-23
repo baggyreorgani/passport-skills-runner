@@ -1,0 +1,8 @@
+{
+  "agent": "weather-seller",
+  "protocol": "a2a",
+  "skills": [
+    { "name": "forecast", "version": "1.0.0", "timeoutSeconds": 10, "inputs": ["location", "units"] },
+    { "name": "historical-weather", "version": "1.0.0", "timeoutSeconds": 20, "inputs": ["location", "from", "to"] }
+  ]
+}
