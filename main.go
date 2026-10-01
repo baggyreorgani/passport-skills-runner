@@ -12,6 +12,8 @@ type Skill struct { Name string `json:"name"`; Version string `json:"version"`; 
 type Passport struct { Agent string `json:"agent"`; Protocol string `json:"protocol"`; Skills []Skill `json:"skills"` }
 type Finding struct { Skill string `json:"skill"`; Code string `json:"code"`; Message string `json:"message"` }
 
+type Report struct { Agent string `json:"agent"`; SkillCount int `json:"skillCount"`; Findings []Finding `json:"findings"` }
+
 func evaluate(p Passport) []Finding {
 	var out []Finding
 	if p.Agent == "" { out = append(out, Finding{"", "missing-agent", "agent is required"}) }
@@ -34,7 +36,7 @@ func main() {
 	b, err := os.ReadFile(*file); if err != nil { fmt.Fprintln(os.Stderr, err); os.Exit(2) }
 	var p Passport; if err := json.Unmarshal(b, &p); err != nil { fmt.Fprintln(os.Stderr, err); os.Exit(2) }
 	findings := evaluate(p)
-	if *jsonOut { enc := json.NewEncoder(os.Stdout); enc.SetIndent("", "  "); _ = enc.Encode(findings) } else if len(findings) == 0 { fmt.Printf("PASS %s: %d skills ready\n", p.Agent, len(p.Skills)) } else { for _, f := range findings { fmt.Printf("FAIL %-18s %s\n", f.Code, f.Message) } }
+	if *jsonOut { enc := json.NewEncoder(os.Stdout); enc.SetIndent("", "  "); _ = enc.Encode(Report{Agent: p.Agent, SkillCount: len(p.Skills), Findings: findings}) } else if len(findings) == 0 { fmt.Printf("PASS %s: %d skills ready\n", p.Agent, len(p.Skills)) } else { for _, f := range findings { fmt.Printf("FAIL %-18s %s\n", f.Code, f.Message) } }
 	if len(findings) > 0 { os.Exit(1) }
 }
 
